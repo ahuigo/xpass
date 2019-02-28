@@ -1,0 +1,27 @@
+language: python
+
+python:
+  - '3.6'
+
+install:
+  - printf '%s' $'a'
+  - echo $'\ta'
+  - echo 'from subprocess import getoutput as sh; print(sh("echo $'\''\ta'\''"))'| python -
+  - pip install -q -r requirements-dev.txt .
+  - pip install coveralls
+
+script:
+  - coverage run --source "$(basename "$PWD")" setup.py test
+
+after_success:
+  - echo success
+
+notifications:
+  email: false
+deploy:
+  provider: pypi
+  user: ahuigo
+  on:
+    tags: true
+  password:
+    secure: "d+OYSh0ZDEmoqi/rxmqidZCEU9U4lwdJf7hb2bnHTxnOPwarQ3aan5yU0VHEqeMIukHKIzrCnIxIJLxGCZ79WX9QJq0WMBNt5gLlpjbCq1MqLjUtK7WwPiZMDZmulU07a1BizoPc082h2fOmaJqcWTHG/VMLGUJojvKqi6/Aa8nWfJlageTc7bpi4/6wcuBfTCCjplKmjXDrDMoJr+ov0e/2ZgWOuUf2lCb8XepE7UFBrmIvtI3iqU25PDQVcg6+rPY6GeeorivKZA7FBhX0myguQdD2NJz02gq+d6+iDNI0QJ7kKN27dqsskjCHwuspK8jKgU8E7uAf++3C4yAksNCuHHmlYQMyw4DwPiDz9Og7JRpcgSTBeOqO+xqrI0nRoSlO69BFOzmF04aYWvJoZSgStC5OakgKblTJ75B7cq3fdUz2s+/rzOfiwIYcIjBsJcmPvO4WfA5NgsamuqPPO5+wiyL5TGc3Cdc6sDdpOMiJpkuUgxvVpZaR1ygq0zzq8tnzaH6R6qS850pO+OmR+NuTBQQdeJjbQTcs08NV/arZ0c01QdKvkdbnk0ZlPs+bGb0+HCFhQSW5lqOxQWbzmEJIYaKWYFDpWHFM2G1l2HpLwN7dEMvDB4wcYvt3F6mZ9ZqNwQkklCNfaI/IENX/i3+y/zSC8bKAXw/mehe6deE="

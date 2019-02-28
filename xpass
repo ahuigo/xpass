@@ -1,0 +1,70 @@
+#!/usr/bin/env python3
+import sys
+import os
+import re
+import argparse
+import sh
+from subprocess import getstatusoutput as sh
+from .aes import AesEcb
+
+XPASS = f"{os.getenv('HOME')}/.xpass"
+
+def gen_pass(num):
+    import secrets
+    # chars = string.printtable.strip()
+    # chars = string.ascii_letters+string.digits+string.punctuation
+    chars = string.ascii_letters+string.digits+'!"#$%&\'()*+,-./:;<=>?@[]^_{}'
+    return ''.join(secrets.choice(chars) for i in range(num))
+
+
+def init():
+    code, res = sh(f'mkdir {os.home()}/.xpass')
+    if code == 0:
+        print('init success')
+    else:
+        print(res)
+
+def ls():
+    print(sh(f'tree {XPASS}')[1])
+
+
+
+def insert():
+    ''' 
+    xpass insert email/qq
+    xpass insert email/qq -m
+    xpass insert email/qq -gen 15
+    '''    
+    import argparse
+    parser = argparse.ArgumentParser()
+    parser.add_argument('insert')
+    parser.add_argument('path')
+    parser.add_argument('-m', dest='multiple', action='store_true',
+                            help='imput multiple info')
+    parser.add_argument('-g','--gen', type=int)
+
+    parser.add_argument("-v", "--verbose", help="increase output verbosity",
+                            action="store_false")
+
+    args = parser.parse_args(sys.argv)
+    if args.gen:
+        password = gen_pass(args.gen)
+    else:
+        password = read()
+    getsh(f'mkdir {os.home()}/.xpass')
+
+def rm():
+    getsh(f'mkdir {os.home()}/.xpass')
+
+def get():
+    getsh(f'mkdir {os.home()}/.xpass')
+
+cmd = sys.argv[1] if len(sys.argv)>1 else 'help'
+if cmd == 'init':
+    init()
+elif cmd == 'insert':
+    insert()
+elif cmd == 'rm':
+    rm()
+else:
+    get()
