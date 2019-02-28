@@ -5,7 +5,7 @@ import re
 import argparse
 import sh
 from subprocess import getstatusoutput as sh
-from .aes import AesEcb
+from .aes import AesEcb as crypt
 
 XPASS = f"{os.getenv('HOME')}/.xpass"
 
@@ -16,13 +16,23 @@ def gen_pass(num):
     chars = string.ascii_letters+string.digits+'!"#$%&\'()*+,-./:;<=>?@[]^_{}'
     return ''.join(secrets.choice(chars) for i in range(num))
 
+def read_pass():
+    pass
 
 def init():
-    code, res = sh(f'mkdir {os.home()}/.xpass')
-    if code == 0:
-        print('init success')
-    else:
-        print(res)
+    code, res = sh(f'mkdir {XPASS}')
+    if code != 0:
+        exit(res)
+    while True:
+        password = read_pass()
+        if password:
+            pass_path = XPASS.strip('/')+'.passwd'
+            if os.path.exists(pass_path):
+                quit(f'{pass_path} exists')
+            with open(pass_path, 'w') as fp:
+                fp.write(password)
+            break
+    print('init success')
 
 def ls():
     print(sh(f'tree {XPASS}')[1])
@@ -51,6 +61,7 @@ def insert():
         password = gen_pass(args.gen)
     else:
         password = read()
+    args.path
     getsh(f'mkdir {os.home()}/.xpass')
 
 def rm():
